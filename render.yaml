@@ -1,0 +1,27 @@
+# Render Blueprint: one web service (API + website) + one PostgreSQL database.
+# Render dashboard → New → Blueprint → pick this repo.
+databases:
+  - name: novamart-db
+    plan: free
+    databaseName: novamart
+    user: novamart
+
+services:
+  - type: web
+    name: novamart
+    runtime: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DATABASE_URL
+        fromDatabase:
+          name: novamart-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TEST_RESET_KEY
+        generateValue: true
