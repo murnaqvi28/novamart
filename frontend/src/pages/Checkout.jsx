@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import OrderSummary from '../components/OrderSummary.jsx';
+import Spinner from '../components/Spinner.jsx';
 
 const CITIES = ['Islamabad', 'Rawalpindi', 'Lahore', 'Karachi', 'Peshawar', 'Faisalabad', 'Multan', 'Quetta'];
 
@@ -20,7 +21,7 @@ function Field({ label, name, error, ...props }) {
 
 export default function Checkout() {
   const { user } = useAuth();
-  const { cart, refresh } = useCart();
+  const { cart, loaded, refresh } = useCart();
   const notify = useToast();
   const navigate = useNavigate();
   const [ship, setShip] = useState({ name: user?.name || '', phone: '', address: '', city: 'Rawalpindi', postalCode: '' });
@@ -33,6 +34,7 @@ export default function Checkout() {
   const [formError, setFormError] = useState('');
   const [placing, setPlacing] = useState(false);
 
+  if (!loaded) return <Spinner />;
   if (cart.items.length === 0 && !placing) return <Navigate to="/cart" replace />;
 
   const totals = coupon?.totals || cart.totals;
